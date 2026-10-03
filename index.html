@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="UNLOCKED">
+<link rel="manifest" href="manifest.webmanifest">
+<title>UNLOCKED — Maya</title>
+<style>
+:root{--bg:#050506;--panel:#121214;--card:#1c1c1f;--line:#303035;--text:#f5f5f7;--muted:#9a9aa2;--blue:#0a84ff;--green:#30d158;--red:#ff453a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:#000;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Arial,sans-serif;min-height:100%;overscroll-behavior:none}button,input,textarea{font:inherit}button{color:inherit}
+#game{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:12px}
+.phone{width:min(100%,430px);background:#050505;border:2px solid #27272b;border-radius:43px;padding:9px;box-shadow:0 20px 70px #000}
+.screen{background:#000;border-radius:34px;overflow:hidden;min-height:min(900px,calc(100vh - 24px));position:relative}
+.dynamic{position:absolute;z-index:50;top:7px;left:50%;transform:translateX(-50%);width:126px;height:28px;border-radius:18px;background:#000}
+.status{height:42px;padding:12px 20px 0;display:flex;justify-content:space-between;align-items:flex-start;font-size:13px;font-weight:650;position:relative;z-index:40}
+.status .icons{letter-spacing:1px}
+#view{min-height:calc(min(900px,100vh - 24px) - 66px);padding-bottom:28px}
+.lock{min-height:calc(min(900px,100vh - 24px) - 66px);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:55px 20px 30px;background:radial-gradient(circle at 50% 28%,#303039 0,#15151b 35%,#050506 72%)}
+.locktime{font-size:64px;line-height:1;font-weight:700;letter-spacing:-4px;text-align:center}.lockdate{text-align:center;font-size:16px;color:#ddd;margin-top:7px}
+.polaroid{background:#eee;padding:10px 10px 20px;width:176px;margin:30px auto 0;transform:rotate(-3deg);box-shadow:0 15px 45px #0009}.teddy{height:128px;background:linear-gradient(135deg,#9d7655,#e8c59e);display:flex;align-items:center;justify-content:center;font-size:63px}.polaroid small{display:block;color:#171717;text-align:center;font-family:cursive;font-size:18px;margin-top:7px}
+.pin{display:flex;justify-content:center;gap:12px;margin:14px 0}.dot{width:10px;height:10px;border:1px solid #ddd;border-radius:50%}.dot.on{background:#fff}
+.keypad{display:grid;grid-template-columns:repeat(3,70px);gap:12px}.key{height:58px;border:0;border-radius:50%;background:#303035;font-size:24px}.key:active{background:#5a5a60}
+.home{padding:24px 17px}.homehead{display:flex;justify-content:space-between;align-items:end;margin-bottom:24px}.hello{font-size:30px;font-weight:750}.small{color:var(--muted);font-size:12px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 10px}.appbtn{border:0;background:none;text-align:center;padding:0;min-width:0}.ico{width:58px;height:58px;margin:0 auto 6px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(145deg,#29292e,#17171a);border:1px solid #33333a}.appname{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.badge{position:absolute;transform:translate(20px,-64px);background:#ff3b30;border:2px solid #050505;border-radius:18px;min-width:21px;padding:1px 5px;font-size:11px}
+.page{padding:6px 16px 30px}.bar{display:flex;align-items:center;gap:8px;margin-bottom:16px}.back{border:0;background:none;color:var(--blue);font-size:16px;padding:9px 4px}.title{font-size:28px;font-weight:750;letter-spacing:-.5px}.search{width:100%;background:#202023;border:1px solid #303036;color:#fff;border-radius:12px;padding:11px 13px;font-size:16px;margin-bottom:11px;outline:none}.search:focus{border-color:#6b6b72}.list{display:flex;flex-direction:column;gap:7px}.row{width:100%;text-align:left;background:var(--card);border:1px solid #28282d;border-radius:14px;padding:13px}.row:active{background:#29292d}.row b{display:block;font-size:15px}.row span{display:block;color:var(--muted);font-size:13px;line-height:1.35;margin-top:3px}.detail{background:#17171a;border:1px solid #29292e;border-radius:15px;padding:15px;font-size:14px;line-height:1.45}.detail h3{font-size:18px;margin:0 0 8px}.tag{display:inline-block;background:#29292e;color:#bbb;padding:4px 7px;border-radius:8px;margin:2px 3px 2px 0;font-size:12px}
+.chat{display:flex;flex-direction:column;gap:7px}.bubble{max-width:83%;padding:9px 12px;border-radius:17px;line-height:1.35;font-size:14px}.in{align-self:flex-start;background:#303036}.out{align-self:flex-end;background:#087f35}.compose{display:flex;gap:7px;margin-top:10px}.compose input{flex:1;min-width:0;background:#202023;border:1px solid #36363c;color:#fff;border-radius:19px;padding:10px 13px;font-size:16px;outline:none}.send{border:0;background:var(--blue);border-radius:19px;padding:0 14px}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}.photo{aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#333}.photo svg{width:100%;height:100%;display:block}.photo button{border:0;background:none;width:100%;height:100%;padding:0}.photo span{font-size:26px}
+.storybar{display:flex;gap:8px;overflow-x:auto;padding:3px 0 12px}.story{min-width:65px;text-align:center;font-size:10px;color:#bbb}.storypic{width:54px;height:54px;border-radius:50%;margin:auto auto 4px;border:2px solid #888;display:flex;align-items:center;justify-content:center;background:#25252a}
+.bottom{height:24px;display:flex;justify-content:center;align-items:center}.homebar{width:120px;height:5px;border-radius:5px;background:#fff;opacity:.85}
+.toast{position:absolute;left:18px;right:18px;bottom:42px;z-index:80;background:#242428;border:1px solid #46464c;border-radius:14px;padding:11px;text-align:center;font-size:13px}
+.modal{position:absolute;z-index:70;inset:42px 0 0;background:#000d;display:flex;align-items:flex-end}.sheet{width:100%;background:#17171a;border-radius:22px 22px 0 0;padding:18px;max-height:82%;overflow:auto}.sheet h3{margin:0 0 12px;font-size:20px}.close{float:right;border:0;background:#303036;border-radius:50%;width:32px;height:32px}
+.gallerymeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;color:#aaa;font-size:12px}
+.loading{padding:30px;text-align:center;color:#999}
+@media(max-width:360px){.grid{gap:17px 7px}.ico{width:52px;height:52px}.keypad{grid-template-columns:repeat(3,62px)}.locktime{font-size:58px}}
+
+.storybar{display:flex;gap:12px;overflow:auto;padding:4px 0 14px}.story{min-width:58px;text-align:center;font-size:10px;color:#bbb}.storypic{width:50px;height:50px;border-radius:50%;margin:auto auto 4px;background:linear-gradient(145deg,#ff9a9e,#fad0c4);display:flex;align-items:center;justify-content:center;color:#111;font-size:22px;border:2px solid #fff}.meta{font-size:11px;color:#777;margin-top:4px}.divider{height:1px;background:#2d2d32;margin:12px 0}.chiprow{display:flex;gap:7px;overflow:auto;margin:0 0 12px}.chip{border:1px solid #3a3a40;background:#1d1d20;border-radius:18px;padding:7px 11px;white-space:nowrap;font-size:12px}.igpost{background:#17171a;border:1px solid #29292e;border-radius:15px;overflow:hidden;margin-bottom:10px}.ighead{display:flex;align-items:center;gap:9px;padding:11px}.avatar{width:34px;height:34px;border-radius:50%;background:#3a3a40;display:flex;align-items:center;justify-content:center}.igimg{height:220px;display:flex;align-items:center;justify-content:center;font-size:70px;background:linear-gradient(135deg,#34343a,#17171a)}.igbody{padding:10px 12px 13px}.tiny{font-size:11px;color:#888}.selectrow{display:flex;gap:8px;align-items:center}.timeline{border-left:2px solid #35353a;margin:4px 0 0 9px;padding-left:15px}.event{position:relative;padding:0 0 16px}.event:before{content:'';position:absolute;left:-22px;top:3px;width:9px;height:9px;border-radius:50%;background:#777}.event b{font-size:13px}.event span{display:block;color:#999;font-size:12px;margin-top:3px}.callout{border-left:3px solid #777;padding:9px 11px;background:#1b1b1e;border-radius:0 10px 10px 0;color:#ddd;font-size:13px}.disabled{opacity:.55}.composer-note{font-size:11px;color:#777;margin-top:6px}
+</style>
+</head>
+<body>
+<div id="game">
+<div class="phone">
+<div class="screen">
+<div class="dynamic"></div>
+<div class="status"><span id="time">22:14</span><span class="icons">▮▮▮ ◉ ▰</span></div>
+<div id="view"></div>
+<div class="bottom"><div class="homebar"></div></div>
+</div>
+</div>
+</div>
+<script>
+"use strict";
+(() => {
+const view=document.getElementById("view"), clock=document.getElementById("time");
+const KEY="unlocked_ios_state_v1";
+const base={
+  unlocked:false,pin:"",page:"lock",burcuOpened:false,burcuSent:false,
+  discovered:new Set(),notes:[],galleryOpen:0
+};
+let state={...base};
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s){state={...state,...s,discovered:new Set(s.discovered||[])};}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({...state,discovered:[...state.discovered]}));}catch(e){}}
+function tick(){clock.textContent=new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});}
+tick();setInterval(tick,30000);
+
+const apps=[
+["WhatsApp","💬","wa",3],["Galerie","🖼️","gallery"],["Kontakte","👤","contacts"],["Telefon","☎️","phone"],
+["Mail","✉️","mail",2],["Kalender","📅","calendar"],["Maps","🗺️","maps"],["Instagram","◎","instagram"],
+["Notizen","📝","notes"],["Dateien","📁","files"],["Kamera","📷","camera"],["Musik","♫","music"],
+["Wetter","☀️","weather"],["Uhr","⏱️","clock"],["Erinnerungen","✓","reminders"],["Safari","🧭","safari"],
+["Sprachmemos","🎙️","voice"],["Health","♥","health"],["Wallet","▣","wallet"],["Übersetzen","文","translate"],
+["Einstellungen","⚙️","settings"],["Suchen","⌕","search"]
+];
+
+const galleryTopics=[
+["WG","Maya im Spiegel vor der Arbeit","🪞"],["Studio","Pinsel und Make-up am Arbeitsplatz","💄"],
+["Freunde","Abendessen mit Isabelle","🍝"],["Familie","Mama beim Kaffee","☕"],["Reise","Flughafen","✈️"],
+["Beauty","Make-up Look","💋"],["Outfit","Spiegel-Selfie","👗"],["Essen","Café-Frühstück","🥐"],
+["Studio","Atelier Noir – Arbeitsplatz","🎨"],["Alltag","Sonnenuntergang","🌅"],["WG","Küche","🏠"],["Freunde","Girls Night","🥂"]
+];
+const chatData={
+Burcu:[
+["in","Maya du wirst vermisst ich vermisse dich ❤️","26.09. · 09:11"],
+["in","Ich weiß nicht ob du das irgendwann liest aber bitte melde dich","26.09. · 14:38"],
+["in","Ich mache mir langsam wirklich Sorgen","27.09. · 08:02"]
+],
+Mama:[
+["in","Hast du heute gegessen?","21.09. · 18:22"],["out","ja mama alles gut","21.09. · 18:40"],
+["in","Meld dich wenn du zuhause bist.","21.09. · 18:41"]
+],
+Isabelle:[
+["in","😂 ich kann immer noch nicht glauben was gestern passiert ist","20.09. · 11:13"],
+["out","ich schwöre ich auch","20.09. · 11:18"],
+["in","du musst mir die fotos schicken","20.09. · 11:19"]
+],
+"Atelier Noir":[
+["in","Camila: Morgen bitte 9:00 im Studio","21.09. · 19:03"],
+["out","bin da","21.09. · 19:05"],["in","Julien: Die Fotos sind angekommen","22.09. · 09:16"]
+],
+"Michelle":[["in","Bist du noch wach?","21.09. · 23:41"],["out","ja leider 😂","21.09. · 23:44"]],
+"S.🍂":[["in","Hey","21.09. · 23:47"],["out","?","21.09. · 23:49"]]
+};
+
+const mailData=[
+{id:"MAIL-031",title:"Make-up Termin",from:"Leon Hartmann",date:"21.09.2026 · 10:17",body:"Hallo Maya,\nich würde gerne einen Termin für ein Make-up vereinbaren. Ich habe deinen Kontakt über eine Empfehlung bekommen.\nViele Grüße\nLeon"},
+{id:"MAIL-032",title:"Termin / Adresse",from:"Leon Hartmann",date:"21.09.2026 · 11:02",body:"Hier nochmal die Adresse für den Termin am 22.09. um 14:00 Uhr.\nDanke und bis dann."},
+{id:"MAIL-033",title:"Studio-Organisation",from:"Camila · Atelier Noir",date:"21.09.2026 · 18:11",body:"Morgen bitte pünktlich sein. Wir haben mehrere Termine."},
+{id:"MAIL-034",title:"Moodboard September",from:"Julien Morel",date:"20.09.2026 · 15:42",body:"Anbei die aktuelle Version."}
+];
+
+const calendarData=[
+["CAL-031","22.09.2026 · 14:00","Make-up Termin · Leon Hartmann","Externe Adresse"],
+["CAL-032","23.09.2026","WG","keine weiteren Details"],
+["CAL-033","24.09.2026 · 09:00","Atelier Noir","Arbeit"],
+["CAL-034","26.09.2026","—","keine Einträge"]
+];
+
+const contactData=[
+["Maya","Eigene Karte","23 · Makeup / Stylist"],["Burcu","WG","psychologische Beratung"],
+["Camila","Atelier Noir","Studio / Arbeit"],["Michelle","Atelier Noir","Kontakt"],
+["Isabelle","Freundin","privat"],["Mama","Familie","privat"],["Papa","Familie","privat"],
+["Julien Morel","Atelier Noir","Fotografie"],["Nora","Freundin","privat"],
+["Sergio Ramirez","Ex","privat"],["Studio-Lover","Atelier","Kontakt"],
+["Noah Keller","Atelier Noir","ehemaliger Praktikant"],["Leon Hartmann","Kunde","Make-up Termin"]
+];
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function row(title,sub,action="",id=""){return `<button class="row" data-action="${esc(action)}" data-id="${esc(id)}"><b>${esc(title)}</b><span>${esc(sub)}</span></button>`;}
+function bar(title){return `<div class="bar"><button class="back" data-action="home">‹ Zurück</button><div class="title">${esc(title)}</div></div>`;}
+function toast(msg){let old=document.querySelector(".toast");if(old)old.remove();const t=document.createElement("div");t.className="toast";t.textContent=msg;document.querySelector(".screen").appendChild(t);setTimeout(()=>t.remove(),2200);}
+function openPage(p){state.page=p;save();render();}
+
+function lock(){
+return `<div class="lock">
+<div><div class="locktime">22:14</div><div class="lockdate">Samstag, 26. September</div>
+<div class="polaroid"><div class="teddy">🧸</div><small>16.07♥️</small></div>
+<div style="text-align:center;color:#aaa;font-size:13px;margin-top:20px">PIN eingeben</div>
+<div class="pin">${[0,1,2,3].map((_,i)=>`<i class="dot ${state.pin.length>i?"on":""}"></i>`).join("")}</div></div>
+<div class="keypad">${[1,2,3,4,5,6,7,8,9,"⌫",0].map(n=>`<button class="key" data-pin="${n}">${n}</button>`).join("")}</div>
+</div>`;
+}
+function home(){
+return `<div class="home"><div class="homehead"><div><div class="hello">Maya</div><div class="small">Samstag · 26.09.2026</div></div><div class="small">100%</div></div>
+<div class="grid">${apps.map(a=>`<button class="appbtn" data-action="app" data-id="${a[2]}"><div class="ico">${a[1]}</div>${a[3]?`<span class="badge">${a[3]}</span>`:""}<div class="appname">${a[0]}</div></button>`).join("")}</div></div>`;
+}
+
+function wa(){
+return `<div class="page">${bar("WhatsApp")}<input class="search" placeholder="Suchen" id="waSearch">
+<div class="list">${["Burcu","Mama","Isabelle","Atelier Noir","Michelle","S.🍂","Julien Morel"].map(n=>row(n, n==="Burcu"?"Maya du wirst vermisst ich vermisse dich ❤️":n==="S.🍂"?"23:51 · Verpasster Anruf":"Letzte Nachricht","chat",n)).join("")}</div></div>`;
+}
+function chat(name){
+const msgs=chatData[name]||[];
+if(name==="Burcu"&&state.burcuSent){msgs.push(["out","Hi ich bin nicht Maya ich habe ihr Handy gefunden","Jetzt"],["in","Wer bist du? Wo hast du ihr Handy gefunden?","Jetzt"],["out","Ich versuche herauszufinden was passiert ist.","Jetzt"],["in","Okay… ich glaube ich muss dir helfen. Maya war an einem Tag vor ihrem Verschwinden sehr komisch.","Jetzt"],["in","Achte mal auf den Tag. Und schau dir diese Person nochmal genauer an.","Jetzt"],["in","Noah? Der Praktikant von damals? Maya fand ihn schon damals unangenehm.","Jetzt"]);state.burcuOpened=true;}
+return `<div class="page">${bar(name)}<div class="chat">${msgs.map(m=>`<div class="bubble ${m[0]}">${esc(m[1])}<div style="font-size:10px;color:#aaa;margin-top:3px">${esc(m[2])}</div></div>`).join("")}</div>
+${name==="Burcu"?`<form class="compose" id="burcuForm"><input id="burcuInput" placeholder="Nachricht an Burcu"><button class="send">Senden</button></form>`:""}</div>`;
+}
+
+function gallery(){
+const items=[];
+for(let i=1;i<=450;i++){const t=galleryTopics[(i-1)%galleryTopics.length];items.push({id:`GAL-${String(i).padStart(3,"0")}`,topic:t[0],caption:t[1],emoji:t[2]});}
+items[450-1]={id:"GAL-450",topic:"Alltag",caption:"Letztes normales Foto im Archiv",emoji:"📱"};
+items.push({id:"GAL-451",topic:"Atelier Noir",caption:"Älteres Foto aus dem Studio – Maya mit mehreren Praktikanten",emoji:"🎨",special:"Noah ist im Hintergrund sichtbar."});
+items.push({id:"GAL-452",topic:"Atelier Noir",caption:"Gruppenfoto – älteres Team",emoji:"👥",special:"Noah ist auf dem Foto, ohne besondere Markierung."});
+items.push({id:"GAL-453",topic:"22.09.",caption:"Maya vor dem Verlassen der WG",emoji:"💄"});
+items.push({id:"GAL-454",topic:"22.09.",caption:"Tasche / Arbeitsmaterial",emoji:"👜"});
+items.push({id:"GAL-455",topic:"22.09.",caption:"Letztes normales gespeichertes Foto",emoji:"📸"});
+return `<div class="page">${bar("Galerie")}<div class="gallerymeta"><span>2.481 Fotos & Videos</span><span>Alben · Favoriten</span></div><div class="photos">${items.slice(0,96).map((p,i)=>`<div class="photo"><button data-action="photo" data-id="${p.id}" aria-label="${esc(p.caption)}">${svgPhoto(p.emoji,i,p.topic)}</button></div>`).join("")}</div><div class="detail" style="margin-top:12px">Das Archiv enthält viel normales Leben. Nichts ist als Hinweis markiert.</div></div>`;
+}
+function svgPhoto(emoji,i,topic){
+const hue=(i*37)%360;
+return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g${i}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="hsl(${hue},18%,28%)"/><stop offset="1" stop-color="hsl(${(hue+55)%360},24%,58%)"/></linearGradient></defs><rect width="100" height="100" fill="url(#g${i})"/><circle cx="${25+(i%4)*15}" cy="${30+(i%3)*12}" r="${12+(i%5)*2}" fill="rgba(255,255,255,.13)"/><rect x="8" y="70" width="84" height="18" rx="5" fill="rgba(0,0,0,.25)"/><text x="50" y="83" fill="white" text-anchor="middle" font-size="9" font-family="Arial">${esc(topic)}</text><text x="50" y="55" fill="white" text-anchor="middle" font-size="25">${emoji}</text></svg>`;
+}
+
+function contacts(){return `<div class="page">${bar("Kontakte")}<input class="search" id="contactSearch" placeholder="Suchen"><div class="list">${contactData.map(c=>row(c[0],c[1]+" · "+c[2],"contact",c[0])).join("")}</div></div>`;}
+function phone(){return `<div class="page">${bar("Telefon")}<div class="list">${[
+["Burcu","27 Min."],["Mama","11 Min."],["Mama","18 Min."],["Isabelle","53 Min."],["Papa","6 Min."],["S.🍂","23:51 · Verpasster Anruf"],["Michelle","4 Min."],["Nora","31 Min."]
+].map(c=>row(c[0],c[1])).join("")}</div></div>`;}
+function mail(){return `<div class="page">${bar("Mail")}<div class="list">${mailData.map(m=>row(m.title,m.from+" · "+m.date,"mail",m.id)).join("")}</div></div>`;}
+function calendar(){return `<div class="page">${bar("Kalender")}<div class="list">${calendarData.map(c=>row(c[1],c[2]+" · "+c[3],"calendar",c[0])).join("")}</div></div>`;}
+function maps(){return `<div class="page">${bar("Maps")}<div class="detail"><h3>Zuletzt gesucht</h3><p>Atelier Noir</p><p>Adresse des Make-up-Termins</p><p>Supermarkt · Café · Apotheke</p><hr style="border-color:#333"><span class="tag">22.09.</span><span class="tag">14:00</span><span class="tag">Termin</span><p style="color:#999">Eine Maps-Suche beweist nicht, dass Maya an einem Ort war.</p></div></div>`;}
+function instagram(){return `<div class="page">${bar("Instagram")}<div class="detail"><h3>@m.beauty.atelier</h3><p>Make-up · Beauty · Lifestyle</p><span class="tag">2.4k Follower</span><span class="tag">normaler Feed</span></div><div class="storybar">${["Maya","Isabelle","Atelier","Beauty","Travel"].map(x=>`<div class="story"><div class="storypic">◎</div>${x}</div>`).join("")}</div><div class="photos">${Array.from({length:24},(_,i)=>`<div class="photo">${svgPhoto(["💄","👗","✨","📸","☕","💋"][i%6],i,"")}</div>`).join("")}</div></div>`;}
+function notes(){return `<div class="page">${bar("Notizen")}<div class="list">${[
+["Einkauf","Milch · Kaffee · Waschmittel"],["Shoot morgen","Pinsel reinigen · Tasche packen"],["WG","Müll rausbringen"],["Manche Dinge fühlen sich gerade komplizierter an als sie sein müssten.",""],["Heute war eigentlich ein guter Tag.",""]
+].map(n=>row(n[0],n[1])).join("")}</div></div>`;}
+function files(){return `<div class="page">${bar("Dateien")}<div class="list">${row("Makeup_Invoice.pdf","Atelier Noir · Dokument")+row("Moodboard_September.pdf","Arbeit")+row("Termin_Leon.pdf","Make-up · 22.09.2026")+row("Downloads","7 Dateien")}</div></div>`;}
+function camera(){return `<div class="page">${bar("Kamera")}<div class="detail" style="text-align:center;padding:50px 15px"><div style="font-size:70px">📷</div><p>Gespeicherte Aufnahmen findest du in der Galerie.</p><p style="color:#999">Die echte iPhone-Kamera wird aus Datenschutzgründen nicht angefordert.</p></div></div>`;}
+function music(){return `<div class="page">${bar("Musik")}<div class="list">${["Morning · 34 Titel","Get Ready · 51 Titel","Studio · 28 Titel","Girls Night · 19 Titel","Old Stuff · 42 Titel","Favorites · 17 Titel"].map(x=>row(x,"Playlist")).join("")}</div></div>`;}
+function weather(){return `<div class="page">${bar("Wetter")}<div class="detail"><h3>Heute</h3><div style="font-size:52px">18°</div><p>Teilweise bewölkt</p><p style="color:#999">Morgen 17° · Samstag 16°</p></div></div>`;}
+function clockPage(){return `<div class="page">${bar("Uhr")}<div class="list">${row("06:30","Arbeit · Alarm")+row("08:00","Samstag · Alarm")+row("Timer","Kein aktiver Timer")}</div></div>`;}
+function settings(){return `<div class="page">${bar("Einstellungen")}<div class="list">${row("Allgemein","iPhone-Einstellungen")+row("Datenschutz","Standard")+row("iCloud","Synchronisierung aktiv")+row("Apps","Installierte Apps")}</div></div>`;}
+function search(){return `<div class="page">${bar("Suchen")}<input class="search" id="globalSearch" placeholder="Auf dem iPhone suchen"><div id="searchResult" class="detail">Suche nach Namen, Apps oder Begriffen.</div></div>`;}
+
+function render(){
+if(!state.unlocked){view.innerHTML=lock();bind();return;}
+if(state.page==="home"){view.innerHTML=home();bind();return;}
+let content;
+switch(state.page){
+case"wa":content=wa();break;case"gallery":content=gallery();break;case"contacts":content=contacts();break;case"phone":content=phone();break;
+case"mail":content=mail();break;case"calendar":content=calendar();break;case"maps":content=maps();break;case"instagram":content=instagram();break;
+case"notes":content=notes();break;case"files":content=files();break;case"camera":content=camera();break;case"music":content=music();break;
+case"weather":content=weather();break;case"clock":content=clockPage();break;case"settings":content=settings();break;case"search":content=search();break;
+default:content=home();
+}
+view.innerHTML=content;bind();
+}
+
+function bind(){
+document.querySelectorAll("[data-pin]").forEach(b=>b.addEventListener("click",()=>{
+const n=b.dataset.pin;
+if(n==="⌫")state.pin=state.pin.slice(0,-1);else if(state.pin.length<4)state.pin+=n;
+if(state.pin==="1607"){state.unlocked=true;state.pin="";state.page="home";toast("iPhone entsperrt");}
+render();
+}));
+document.querySelectorAll("[data-action='app']").forEach(b=>b.addEventListener("click",()=>openPage(b.dataset.id)));
+document.querySelectorAll("[data-action='home']").forEach(b=>b.addEventListener("click",()=>openPage("home")));
+document.querySelectorAll("[data-action='chat']").forEach(b=>b.addEventListener("click",()=>{state.page="chat:"+b.dataset.id;render();}));
+document.querySelectorAll("[data-action='photo']").forEach(b=>b.addEventListener("click",()=>showPhoto(b.dataset.id)));
+document.querySelectorAll("[data-action='contact']").forEach(b=>b.addEventListener("click",()=>showContact(b.dataset.id)));
+document.querySelectorAll("[data-action='mail']").forEach(b=>b.addEventListener("click",()=>showMail(b.dataset.id)));
+document.querySelectorAll("[data-action='calendar']").forEach(b=>b.addEventListener("click",()=>showCalendar(b.dataset.id)));
+const form=document.getElementById("burcuForm");if(form)form.addEventListener("submit",e=>{e.preventDefault();const val=document.getElementById("burcuInput").value.trim();if(!val)return;if(state.page!=="chat:Burcu")return;state.burcuSent=true;save();render();});
+const gs=document.getElementById("globalSearch");if(gs)gs.addEventListener("input",()=>searchResults(gs.value));
+const cs=document.getElementById("contactSearch");if(cs)cs.addEventListener("input",()=>{const q=cs.value.toLowerCase();document.querySelectorAll("[data-action='contact']").forEach(b=>b.style.display=b.innerText.toLowerCase().includes(q)?"":"none");});
+const ws=document.getElementById("waSearch");if(ws)ws.addEventListener("input",()=>{const q=ws.value.toLowerCase();document.querySelectorAll("[data-action='chat']").forEach(b=>b.style.display=b.innerText.toLowerCase().includes(q)?"":"none");});
+}
+function showPhoto(id){
+const all=[];for(let i=1;i<=455;i++)all.push({id:`GAL-${String(i).padStart(3,"0")}`,caption:"Foto",emoji:"📸"});
+const special={ "GAL-451":["Älteres Atelier-Foto","🎨","Noah ist im Hintergrund sichtbar."],"GAL-452":["Älteres Gruppenfoto","👥","Noah ist auf dem Foto, ohne besondere Markierung."],"GAL-453":["22.09.2026 · Maya vor dem Verlassen der WG","💄","Letztes normales Zeitfenster."],"GAL-454":["Tasche / Arbeitsmaterial","👜","Arbeitsmaterial für den Termin."],"GAL-455":["Letztes normales gespeichertes Foto","📸","Kein Kommentar, keine Markierung."]};
+const p=special[id]||["Galerie-Foto","📸","Normales Foto aus Mayas Alltag."];state.discovered.add(id);save();
+modal(`<h3>${esc(p[0])}</h3><div style="font-size:85px;text-align:center;padding:20px">${p[1]}</div><p>${esc(p[2])}</p>`);
+}
+function showContact(name){
+const c=contactData.find(x=>x[0]===name);state.discovered.add("CONTACT:"+name);save();
+modal(`<h3>${esc(name)}</h3><p>${esc(c?c[1]:"Kontakt")}</p><p style="color:#aaa">${esc(c?c[2]:"")}</p>${name==="Noah Keller"?'<p>Früherer Praktikant bei Atelier Noir.</p>':""}${name==="Leon Hartmann"?'<p>Kunde · Make-up-Termin am 22.09.2026.</p>':""}`);
+}
+function showMail(id){const m=mailData.find(x=>x.id===id);state.discovered.add(id);save();modal(`<h3>${esc(m.title)}</h3><p><b>Von:</b> ${esc(m.from)}</p><p><b>${esc(m.date)}</b></p><p style="white-space:pre-line">${esc(m.body)}</p>`);}
+function showCalendar(id){const c=calendarData.find(x=>x[0]===id);state.discovered.add(id);save();modal(`<h3>${esc(c[2])}</h3><p>${esc(c[1])}</p><p>${esc(c[3])}</p>`);}
+function modal(body){const m=document.createElement("div");m.className="modal";m.innerHTML=`<div class="sheet"><button class="close">×</button>${body}</div>`;document.querySelector(".screen").appendChild(m);m.querySelector(".close").onclick=()=>m.remove();m.addEventListener("click",e=>{if(e.target===m)m.remove();});}
+function searchResults(q){
+const r=document.getElementById("searchResult");if(!r)return;const x=q.trim().toLowerCase();
+if(!x){r.textContent="Suche nach Namen, Apps oder Begriffen.";return;}
+const results=[];
+if("noah keller ehemaliger praktikant praktikant".includes(x)||x.includes("noah"))results.push("Noah Keller · Kontakte · ehemaliger Atelier-Noir-Praktikant");
+if("leon hartmann kunde termin adresse".includes(x)||x.includes("leon"))results.push("Leon Hartmann · Mail · Kalender · Kontakte");
+if("atelier noir studio".includes(x)||x.includes("atelier"))results.push("Atelier Noir · Mail · Kalender · Galerie");
+if("burcu".includes(x))results.push("Burcu · WhatsApp · Kontakte · Telefon");
+if("22.09.2026 14:00 termin".includes(x)||x.includes("22.09"))results.push("22.09.2026 · Make-up Termin · Leon Hartmann");
+r.innerHTML=results.length?results.map(z=>`<p>• ${esc(z)}</p>`).join(""):"Keine Treffer";
+}
+
+/* ===== UNLOCKED V2 STORY/DATA PACK ===== */
+const v2Chats={
+"Atelier Noir":[
+["in","Camila: Morgen bitte 9:00 im Studio. Wir haben mehrere Termine.","21.09. · 19:03"],
+["out","bin da","21.09. · 19:05"],
+["in","Julien: Die Fotos sind angekommen.","22.09. · 09:16"],
+["out","perfekt danke","22.09. · 09:19"],
+["in","Camila: Falls der externe Termin bestätigt wird, gib mir kurz Bescheid.","22.09. · 09:41"],
+["out","mach ich","22.09. · 09:43"]
+],
+"Michelle":[
+["in","Bist du noch wach?","21.09. · 23:41"],["out","ja leider 😂","21.09. · 23:44"],
+["in","morgen Kaffee?","21.09. · 23:45"],["out","wenn ich überlebe ja","21.09. · 23:46"]
+],
+"Isabelle":[
+["in","😂 ich kann immer noch nicht glauben was gestern passiert ist","20.09. · 11:13"],
+["out","ich schwöre ich auch","20.09. · 11:18"],["in","du musst mir die fotos schicken","20.09. · 11:19"],
+["out","später ❤️","20.09. · 11:22"]
+],
+"Mama":[
+["in","Hast du heute gegessen?","21.09. · 18:22"],["out","ja mama alles gut","21.09. · 18:40"],
+["in","Meld dich wenn du zuhause bist.","21.09. · 18:41"],["out","mach ich ❤️","21.09. · 18:43"]
+],
+"S.🍂":[["in","Hey","21.09. · 23:47"],["out","?","21.09. · 23:49"],["in","bist du wach","21.09. · 23:50"]],
+"Burcu":[
+["in","Maya du wirst vermisst ich vermisse dich ❤️","26.09. · 09:11"],
+["in","Ich weiß nicht ob du das irgendwann liest aber bitte melde dich","26.09. · 14:38"],
+["in","Ich mache mir langsam wirklich Sorgen","27.09. · 08:02"]
+]};
+
+const storyEmails=[
+{id:"MAIL-021",title:"September Moodboard",from:"Julien Morel",date:"20.09.2026 · 15:42",body:"Anbei die aktuelle Version.\nLG Julien"},
+{id:"MAIL-022",title:"Re: Externer Termin",from:"Camila · Atelier Noir",date:"21.09.2026 · 09:54",body:"Wenn du den Termin annimmst, trag ihn bitte sauber ein. Externe Termine bitte immer mit Adresse."},
+{id:"MAIL-031",title:"Make-up Termin",from:"Leon Hartmann",date:"21.09.2026 · 10:17",body:"Hallo Maya,\nich würde gerne einen Termin für ein Make-up vereinbaren. Ich habe deinen Kontakt über eine Empfehlung bekommen.\nViele Grüße\nLeon"},
+{id:"MAIL-032",title:"Termin / Adresse",from:"Leon Hartmann",date:"21.09.2026 · 11:02",body:"Hier nochmal die Adresse für den Termin am 22.09. um 14:00 Uhr.\nDanke und bis dann."},
+{id:"MAIL-033",title:"Studio-Organisation",from:"Camila · Atelier Noir",date:"21.09.2026 · 18:11",body:"Morgen bitte pünktlich sein. Wir haben mehrere Termine."},
+{id:"MAIL-034",title:"Moodboard September",from:"Julien Morel",date:"20.09.2026 · 15:42",body:"Anbei die aktuelle Version."}
+];
+const storyCalendar=[
+["CAL-021","18.09.2026 · 11:00","Atelier Noir · Shooting","Arbeit"],
+["CAL-022","20.09.2026 · 19:30","Dinner mit Isabelle","Privat"],
+["CAL-031","22.09.2026 · 14:00","Make-up Termin · Leon Hartmann","Externe Adresse"],
+["CAL-032","23.09.2026","WG","keine weiteren Details"],
+["CAL-033","24.09.2026 · 09:00","Atelier Noir","Arbeit"],
+["CAL-034","26.09.2026","—","keine Einträge"]
+];
+const storyContacts=[
+["Maya","Eigene Karte","23 · Makeup / Stylist"],["Burcu","WG","psychologische Beratung"],["Camila","Atelier Noir","Studio / Arbeit"],
+["Michelle","Atelier Noir","Kontakt"],["Isabelle","Freundin","privat"],["Mama","Familie","privat"],["Papa","Familie","privat"],
+["Julien Morel","Atelier Noir","Fotografie"],["Nora","Freundin","privat"],["Sergio Ramirez","Ex","privat"],["Studio-Lover","Atelier","Kontakt"],
+["Noah Keller","Atelier Noir","ehemaliger Praktikant"],["Leon Hartmann","Kunde","Make-up Termin"]
+];
+
+function storyChat(name){
+let msgs=(v2Chats[name]||chatData[name]||[]).slice();
+if(name==="Burcu"&&state.burcuSent){
+msgs.push(["out",state.burcuLast||"Hi ich bin nicht Maya ich habe ihr Handy gefunden","Jetzt"]);
+if(!state.burcuStage) state.burcuStage=1;
+if(state.burcuStage>=1){
+msgs.push(["in","Wer bist du? Wo hast du ihr Handy gefunden?","Jetzt"]);
+msgs.push(["out","Ich versuche herauszufinden was passiert ist.","Jetzt"]);
+msgs.push(["in","Okay… ich glaube ich muss dir helfen. Maya war an einem Tag vor ihrem Verschwinden sehr komisch.","Jetzt"]);
+}
+if(state.burcuStage>=2){msgs.push(["in","Achte mal auf den Tag. Und schau dir diese Person nochmal genauer an.","Jetzt"]);}
+if(state.burcuStage>=3){msgs.push(["in","Noah? Der Praktikant von damals? Maya fand ihn schon damals unangenehm.","Jetzt"]);}
+if(state.burcuStage>=4){msgs.push(["in","Sie hat mir einmal erzählt, dass sie eine klare Grenze ziehen musste. Ich dachte damals, es wäre einfach nur unangenehm.","Jetzt"]);}
+}
+return msgs;
+}
+function wa(){
+const names=["Burcu","Mama","Isabelle","Atelier Noir","Michelle","S.🍂","Julien Morel","Nora"];
+if(state.page.startsWith("chat:")){
+const name=state.page.slice(5), msgs=storyChat(name);
+return `<div class="page">${bar("WhatsApp")}
+<div class="detail" style="margin-bottom:10px"><b>${esc(name)}</b><div class="tiny">${name==="Burcu"?"zuletzt online vor längerer Zeit":"privat"}</div></div>
+<div class="chat">${msgs.map(m=>`<div class="bubble ${m[0]==="out"?"out":"in"}">${esc(m[1])}<div class="tiny" style="text-align:right">${esc(m[2])}</div></div>`).join("")}</div>
+${name==="Burcu"?`<form class="compose" id="burcuForm"><input id="burcuInput" placeholder="Nachricht schreiben…"><button class="send">Senden</button></form><div class="composer-note">Du schreibst als die Person, die Mayas Handy gefunden hat.</div>`:""}
+</div>`;
+}
+return `<div class="page">${bar("WhatsApp")}<input class="search" id="waSearch" placeholder="Suchen"><div class="list">${names.map(n=>row(n,n==="Burcu"?"Maya du wirst vermisst ich vermisse dich ❤️":"Letzte Nachricht","chat",n)).join("")}</div></div>`;
+}
+
+function gallery(){
+const specials=[
+[451,"Atelier Noir","Älteres Teamfoto","🎨","Noah ist im Hintergrund sichtbar."],
+[452,"Atelier Noir","Älteres Gruppenfoto","👥","Noah ist auf dem Foto, ohne besondere Markierung."],
+[453,"22.09.","Maya vor dem Verlassen der WG","💄","Letztes normales Zeitfenster."],
+[454,"22.09.","Tasche / Arbeitsmaterial","👜","Arbeitsmaterial für den Termin."],
+[455,"22.09.","Letztes normales gespeichertes Foto","📸","Kein Kommentar, keine Markierung."]
+];
+return `<div class="page">${bar("Galerie")}<div class="chiprow"><span class="chip">Alle</span><span class="chip">Favoriten</span><span class="chip">Studio</span><span class="chip">WG</span><span class="chip">2026</span></div><div class="photos">${Array.from({length:60},(_,i)=>`<div class="photo"><button data-action="photo" data-id="GAL-${String(i+1).padStart(3,"0")}">${svgPhoto(galleryTopics[i%galleryTopics.length][2],i,"")}</button></div>`).join("")}${specials.map(s=>`<div class="photo"><button data-action="photo" data-id="GAL-${s[0]}">${svgPhoto(s[3],s[0],"")}</button></div>`).join("")}</div><div class="meta">Viele weitere normale Fotos existieren im Archiv. Nicht jedes Foto hat eine Bedeutung.</div></div>`;
+}
+function instagram(){
+const posts=[
+["POST-018","18.09.2026","💄","Soft glam · Atelier Noir","m.beauty.atelier"],
+["POST-019","20.09.2026","👗","ready for the night","m.beauty.atelier"],
+["POST-020","21.09.2026","✨","new week new looks","m.beauty.atelier"],
+["POST-021","22.09.2026","🪞","draft · not posted","Entwurf"]
+];
+return `<div class="page">${bar("Instagram")}<div class="detail"><h3>@m.beauty.atelier</h3><p>Make-up · Beauty · Lifestyle</p><span class="tag">2.4k Follower</span><span class="tag">öffentlich</span></div><div class="storybar">${["Maya","Isabelle","Atelier","Beauty","Travel"].map(x=>`<div class="story"><div class="storypic">◎</div>${x}</div>`).join("")}</div>${posts.map(p=>`<div class="igpost"><div class="ighead"><div class="avatar">◎</div><div><b>${esc(p[4])}</b><div class="tiny">${esc(p[1])}</div></div></div><div class="igimg">${p[2]}</div><div class="igbody"><b>${esc(p[3])}</b><div class="tiny">${esc(p[0])}</div></div></div>`).join("")}<div class="meta">Instagram ist öffentliche Selbstdarstellung und nicht automatisch ein Beweis für Ort oder Ereignis.</div></div>`;
+}
+function mail(){return `<div class="page">${bar("Mail")}<div class="chiprow"><span class="chip">Postfach</span><span class="chip">VIP</span><span class="chip">Gesendet</span><span class="chip">Archiv</span></div><div class="list">${storyEmails.map(m=>row(m.title,m.from+" · "+m.date,"mail",m.id)).join("")}</div></div>`;}
+function calendar(){return `<div class="page">${bar("Kalender")}<div class="timeline">${storyCalendar.map(c=>`<button class="row event" data-action="calendar" data-id="${c[0]}"><b>${esc(c[1])}</b><span>${esc(c[2])} · ${esc(c[3])}</span></button>`).join("")}</div><div class="meta">Ein Kalendertermin ist eine Planung, kein Beweis dafür, dass ein Termin tatsächlich stattgefunden hat.</div></div>`;}
+function contacts(){return `<div class="page">${bar("Kontakte")}<input class="search" id="contactSearch" placeholder="Suchen"><div class="list">${storyContacts.map(c=>row(c[0],c[1]+" · "+c[2],"contact",c[0])).join("")}</div></div>`;}
+function maps(){return `<div class="page">${bar("Maps")}<div class="list">${row("Atelier Noir","Arbeitsort · häufig gesucht")}${row("Adresse des Make-up-Termins","22.09. · 14:00")}${row("Café","zuletzt gesucht")}${row("Supermarkt","Alltag")}</div><div class="detail" style="margin-top:10px"><h3>Letzte Suchaktivitäten</h3><p>21.09. · Adresse des Make-up-Termins</p><p>22.09. · Route zur externen Adresse</p><p class="tiny">Eine Maps-Suche beweist nicht, dass Maya an einem Ort war.</p></div></div>`;}
+function notes(){const n=[
+["Einkauf","Milch · Kaffee · Waschmittel"],["Shoot morgen","Pinsel reinigen · Tasche packen"],["WG","Müll rausbringen"],["Manche Dinge fühlen sich gerade komplizierter an als sie sein müssten.",""],["Heute war eigentlich ein guter Tag.",""],["Atelier","neue Pinsel bestellen · Julien fragen"],["Termin","Adresse speichern · 14:00"]];return `<div class="page">${bar("Notizen")}<div class="list">${n.map(x=>row(x[0],x[1])).join("")}</div></div>`;}
+function files(){return `<div class="page">${bar("Dateien")}<div class="list">${row("Termin_Leon.pdf","Downloads · 21.09.2026 · PDF")}${row("Moodboard_September.pdf","Atelier Noir · PDF")}${row("Makeup_Invoice.pdf","Atelier Noir · PDF")}${row("IMG_4551.HEIC","Fotos · 22.09.2026")}${row("Downloads","7 Dateien")}</div></div>`;}
+function reminders(){return `<div class="page">${bar("Erinnerungen")}<div class="list">${row("Arbeit","Pinsel reinigen · erledigt")}${row("WG","Müll rausbringen · erledigt")}${row("Privat","Mama zurückrufen · erledigt")}${row("Termin","Adresse für 22.09. speichern · erledigt")}${row("Shopping","Wimpernkleber · offen")}</div></div>`;}
+function safari(){return `<div class="page">${bar("Safari")}<div class="list">${row("Atelier Noir","atelier-noir.example · 21.09.")}${row("Make-up Brushes Review","beauty blog · 20.09.")}${row("Train Stuttgart → Augsburg","DB Suche · 18.09.")}${row("Fake?","Maya hat keine Suche mit diesem Begriff gespeichert.")}</div><div class="meta">Privates Surfen und alte Tabs können existieren, sind aber nicht automatisch storyrelevant.</div></div>`;}
+function voice(){return `<div class="page">${bar("Sprachmemos")}<div class="list">${row("Voice_008","Arbeitsideen · 19.09. · 0:43")}${row("Voice_009","Einkauf · 21.09. · 0:18")}${row("Voice_010","Make-up Termin · 22.09. · 0:31")}</div></div>`;}
+function health(){return `<div class="page">${bar("Health")}<div class="detail"><h3>Aktivität</h3><p>21.09. · 7.842 Schritte</p><p>22.09. · 5.106 Schritte</p><p>23.09. · 1.024 Schritte</p><div class="callout">Die Daten sind unvollständig. Ein fehlender Tag ist kein automatischer Beweis für ein Ereignis.</div></div></div>`;}
+function wallet(){return `<div class="page">${bar("Wallet")}<div class="list">${row("Deutschlandticket","gültig · September 2026")}${row("Studio Event","abgelaufen")}${row("Kundenkarte","Beauty Store")}</div></div>`;}
+function translate(){return `<div class="page">${bar("Übersetzen")}<div class="list">${row("appointment","Termin · Englisch → Deutsch")}${row("maquillage","Make-up · Französisch → Deutsch")}${row("cliente","Kunde · Italienisch → Deutsch")}</div></div>`;}
+
+function showMail(id){const m=storyEmails.find(x=>x.id===id)||mailData.find(x=>x.id===id);if(!m)return;state.discovered.add(id);save();modal(`<h3>${esc(m.title)}</h3><p><b>Von:</b> ${esc(m.from)}</p><p><b>${esc(m.date)}</b></p><p style="white-space:pre-line">${esc(m.body)}</p>`);}
+function showCalendar(id){const c=storyCalendar.find(x=>x[0]===id)||calendarData.find(x=>x[0]===id);if(!c)return;state.discovered.add(id);save();modal(`<h3>${esc(c[2])}</h3><p>${esc(c[1])}</p><p>${esc(c[3])}</p>`);}
+function showContact(name){const c=storyContacts.find(x=>x[0]===name)||contactData.find(x=>x[0]===name);state.discovered.add("CONTACT:"+name);save();let extra="";if(name==="Noah Keller")extra='<div class="divider"></div><p>Früherer Praktikant bei Atelier Noir.</p><p class="tiny">Kontaktkarte enthält keine besondere Warnung.</p>';if(name==="Leon Hartmann")extra='<div class="divider"></div><p>Kunde · Make-up-Termin am 22.09.2026.</p>';modal(`<h3>${esc(name)}</h3><p>${esc(c?c[1]:"Kontakt")}</p><p class="tiny">${esc(c?c[2]:"")}</p>${extra}`);}
+
+// Burcu communication is authored, not freeform AI. Intent is inferred from normal wording.
+function handleBurcuText(val){
+const x=val.toLowerCase();state.burcuLast=val;state.burcuSent=true;
+if(/noah|praktikant|intern/.test(x)) state.burcuStage=Math.max(state.burcuStage||1,3);
+else if(/tag|datum|22\.09|termin|wann/.test(x)) state.burcuStage=Math.max(state.burcuStage||1,2);
+else if(/warum|passiert|person|wer|verdächtig|komisch/.test(x)) state.burcuStage=Math.max(state.burcuStage||1,2);
+else state.burcuStage=Math.max(state.burcuStage||1,1);
+save();render();}
+
+// Override binding with story-safe message handling.
+function bind(){
+document.querySelectorAll("[data-pin]").forEach(b=>b.addEventListener("click",()=>{const n=b.dataset.pin;if(n==="⌫")state.pin=state.pin.slice(0,-1);else if(state.pin.length<4)state.pin+=n;if(state.pin==="1607"){state.unlocked=true;state.pin="";state.page="home";toast("iPhone entsperrt");}render();}));
+document.querySelectorAll("[data-action='app']").forEach(b=>b.addEventListener("click",()=>openPage(b.dataset.id)));
+document.querySelectorAll("[data-action='home']").forEach(b=>b.addEventListener("click",()=>openPage("home")));
+document.querySelectorAll("[data-action='chat']").forEach(b=>b.addEventListener("click",()=>{state.page="chat:"+b.dataset.id;render();}));
+document.querySelectorAll("[data-action='photo']").forEach(b=>b.addEventListener("click",()=>showPhoto(b.dataset.id)));
+document.querySelectorAll("[data-action='contact']").forEach(b=>b.addEventListener("click",()=>showContact(b.dataset.id)));
+document.querySelectorAll("[data-action='mail']").forEach(b=>b.addEventListener("click",()=>showMail(b.dataset.id)));
+document.querySelectorAll("[data-action='calendar']").forEach(b=>b.addEventListener("click",()=>showCalendar(b.dataset.id)));
+const form=document.getElementById("burcuForm");if(form)form.addEventListener("submit",e=>{e.preventDefault();const val=document.getElementById("burcuInput").value.trim();if(val)handleBurcuText(val);});
+const gs=document.getElementById("globalSearch");if(gs)gs.addEventListener("input",()=>searchResults(gs.value));
+const cs=document.getElementById("contactSearch");if(cs)cs.addEventListener("input",()=>{const q=cs.value.toLowerCase();document.querySelectorAll("[data-action='contact']").forEach(b=>b.style.display=b.innerText.toLowerCase().includes(q)?"":"none");});
+const ws=document.getElementById("waSearch");if(ws)ws.addEventListener("input",()=>{const q=ws.value.toLowerCase();document.querySelectorAll("[data-action='chat']").forEach(b=>b.style.display=b.innerText.toLowerCase().includes(q)?"":"none");});
+}
+function render(){
+if(!state.unlocked){view.innerHTML=lock();bind();return;}
+if(state.page==="home"){view.innerHTML=home();bind();return;}
+let content;switch(state.page){
+case"wa":content=wa();break;case"gallery":content=gallery();break;case"contacts":content=contacts();break;case"phone":content=phone();break;case"mail":content=mail();break;case"calendar":content=calendar();break;case"maps":content=maps();break;case"instagram":content=instagram();break;case"notes":content=notes();break;case"files":content=files();break;case"camera":content=camera();break;case"music":content=music();break;case"weather":content=weather();break;case"clock":content=clockPage();break;case"settings":content=settings();break;case"search":content=search();break;case"reminders":content=reminders();break;case"safari":content=safari();break;case"voice":content=voice();break;case"health":content=health();break;case"wallet":content=wallet();break;case"translate":content=translate();break;default:content=home();}
+view.innerHTML=content;bind();}
+
+render();
+})();
+</script>
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
+</script>
+</body>
+</html>
